@@ -1,0 +1,13 @@
+## Title: TrashMailer
+## Author: Kyzeragon
+## Description: One man's trash is another man's treasure
+## Version: 0.0.0
+## APIVersion: 101032
+## DependsOn: LibAddonMenu-2.0>=31
+
+## SavedVariables: TrashMailerSavedVariables
+
+src/TrashMailer.lua
+src/Data.lua
+src/Settings.lua
+
