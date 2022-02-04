@@ -212,3 +212,17 @@ TM.PAINTINGS = {
     [118267] = true, -- Painting of Autumn, Bolted
     [118268] = true, -- Painting of Great Ruins, Bolted
 }
+
+-- Racial style mats
+TM.RACIAL_STYLE_MATS = {
+    [33252] = true, -- Adamantite
+    [33194] = true, -- Bone
+    [33256] = true, -- Corundum
+    [33150] = true, -- Flint
+    [33257] = true, -- Manganese
+    [33251] = true, -- Molybdenum
+    [33255] = true, -- Moonstone
+    [33254] = true, -- Nickel
+    [33253] = true, -- Obsidian
+    [33258] = true, -- Starmetal
+}

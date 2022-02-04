@@ -35,6 +35,10 @@ local defaultOptions = {
         to = "",
         threshold = 1,
     },
+    stylemats = {
+        to = "",
+        threshold = 1,
+    },
 }
 
 local tradeskillToName = {
@@ -52,12 +56,14 @@ local nameToTitleAbbreviation = {
     enchanting = "Glyphs",
     maps = "Maps",
     paintings = "Paintings",
+    stylemats = "StyleMats",
 }
 
 ---------------------------------------------------------------------
 -- Mail formatting
 ---------------------------------------------------------------------
 local function GetMailTitle(trashTypes)
+    -- TODO: for multiple mails, we should only name it whatever is in the actual mail
     local trashNames = {}
     for _, trashType in pairs(trashTypes) do
         table.insert(trashNames, nameToTitleAbbreviation[trashType])
@@ -167,6 +173,7 @@ local function CollectTrash()
         enchanting = {},
         maps = {},
         paintings = {},
+        stylemats = {},
     }
 
     -- Collect the trash items into types
@@ -212,6 +219,12 @@ local function CollectTrash()
             elseif (itemType == ITEMTYPE_FURNISHING) then
                 if (TM.PAINTINGS[GetItemId(item.bagId, item.slotIndex)]) then
                     table.insert(foundTrash.paintings, {bagId = item.bagId, slotIndex = item.slotIndex})
+                end
+
+            -- Style mats non-racial
+            elseif (itemType == ITEMTYPE_STYLE_MATERIAL or itemType == ITEMTYPE_RAW_MATERIAL) then
+                if (not TM.RACIAL_STYLE_MATS[GetItemId(item.bagId, item.slotIndex)]) then
+                    table.insert(foundTrash.stylemats, {bagId = item.bagId, slotIndex = item.slotIndex})
                 end
             end
         end

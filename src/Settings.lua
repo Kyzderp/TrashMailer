@@ -128,6 +128,21 @@ function TM.CreateSettingsMenu()
             isMultiline = false,
             isExtraWide = false,
         },
+        {
+            type = "editbox",
+            name = "Non-racial style materials",
+            width = "full",
+            tooltip = "The @name or character name to send non-racial style materials to",
+            getFunc = function() return TM.savedOptions.stylemats.to end,
+            setFunc = function(name)
+                name = string.gsub(name, "^%s+", "")
+                name = string.gsub(name, "%s+$", "")
+                TM.savedOptions.stylemats.to = name
+            end,
+            isMultiline = false,
+            isExtraWide = false,
+        },
+        -- TODO: add TEST button
     }
 
     TM.addonPanel = LAM:RegisterAddonPanel("TrashMailerOptions", panelData)
