@@ -63,7 +63,6 @@ local nameToTitleAbbreviation = {
 -- Mail formatting
 ---------------------------------------------------------------------
 local function GetMailTitle(trashTypes)
-    -- TODO: for multiple mails, we should only name it whatever is in the actual mail
     local trashNames = {}
     for _, trashType in pairs(trashTypes) do
         table.insert(trashNames, nameToTitleAbbreviation[trashType])
@@ -120,10 +119,12 @@ local function SendTrashMail()
     local mailData = mailQueue[1]
 
     local attachedItemsString = string.format("Items to send to %s:", mailData.recipient)
+    local trashTypesUnique = {}
     for i = 1, MAIL_MAX_ATTACHED_ITEMS do
         local item = table.remove(mailData.items, 1)
         local itemLink = GetItemLink(item.bagId, item.slotIndex, LINK_STYLE_BRACKETS)
         attachedItemsString = string.format("%s %s", attachedItemsString, itemLink)
+        trashTypesUnique[item.trashType] = true
 
         QueueItemAttachment(item.bagId, item.slotIndex, i)
 
@@ -134,11 +135,17 @@ local function SendTrashMail()
         end
     end
     d(attachedItemsString)
+
+    -- For mail title
+    local trashTypes = {}
+    for trashType, _ in pairs(trashTypesUnique) do
+        table.insert(trashTypes, trashType)
+    end
     
     EVENT_MANAGER:RegisterForEvent(TM.name .. "SendSuccess", EVENT_MAIL_SEND_SUCCESS, OnSendTrashSuccess)
     EVENT_MANAGER:RegisterForEvent(TM.name .. "SendFail", EVENT_MAIL_SEND_FAILED, OnSendTrashFailed)
 
-    SendMail(mailData.recipient, GetMailTitle(mailData.trashTypes), GetMailBody())
+    SendMail(mailData.recipient, GetMailTitle(trashTypes), GetMailBody())
 
     CloseTrashMailbox()
 end
@@ -157,11 +164,16 @@ local function DumpMailQueue()
         d(mailString)
     end
 end
+
 ---------------------------------------------------------------------
 -- Inventory checker
 ---------------------------------------------------------------------
-local function CollectTrash()
-    if (IsUnitInCombat("player")) then
+local function AddItemToFound(foundTable, trashType, bagId, slotIndex)
+    table.insert(foundTable[trashType], {bagId = bagId, slotIndex = slotIndex, trashType = trashType})
+end
+
+local function CollectTrash(ignoreThreshold)
+    if (IsUnitInCombat("player") or IsUnitDeadOrReincarnating("player")) then
         return
     end
 
@@ -179,7 +191,7 @@ local function CollectTrash()
     -- Collect the trash items into types
     local bagCache = SHARED_INVENTORY:GetOrCreateBagCache(BAG_BACKPACK)
     for _, item in pairs(bagCache) do
-        if (not IsItemBound(item.bagId, item.slotIndex)) then
+        if (IsItemSellableOnTradingHouse(item.bagId, item.slotIndex)) then
             local itemLink = GetItemLink(item.bagId, item.slotIndex, LINK_STYLE_BRACKETS)
             local itemType, specializedType = GetItemLinkItemType(itemLink)
 
@@ -190,10 +202,10 @@ local function CollectTrash()
                     local skillType, skillId = GetCraftingSkillLineIndices(tradeskillType)
                     local _, level = GetSkillLineInfo(skillType, skillId)
                     if (level == 50) then
-                        table.insert(foundTrash[tradeskillToName[tradeskillType]], {bagId = item.bagId, slotIndex = item.slotIndex})
+                        AddItemToFound(foundTrash, tradeskillToName[tradeskillType], item.bagId, item.slotIndex)
                     end
                 else
-                    table.insert(foundTrash[tradeskillToName[tradeskillType]], {bagId = item.bagId, slotIndex = item.slotIndex})
+                    AddItemToFound(foundTrash, tradeskillToName[tradeskillType], item.bagId, item.slotIndex)
                 end
 
             -- Not crafted glyphs
@@ -203,28 +215,28 @@ local function CollectTrash()
                     local skillType, skillId = GetCraftingSkillLineIndices(CRAFTING_TYPE_ENCHANTING)
                     local _, level = GetSkillLineInfo(skillType, skillId)
                     if (level == 50) then
-                        table.insert(foundTrash.enchanting, {bagId = item.bagId, slotIndex = item.slotIndex})
+                        AddItemToFound(foundTrash, "enchanting", item.bagId, item.slotIndex)
                     end
                 else
-                    table.insert(foundTrash.enchanting, {bagId = item.bagId, slotIndex = item.slotIndex})
+                    AddItemToFound(foundTrash, "enchanting", item.bagId, item.slotIndex)
                 end
 
             -- Treasure maps pre-Greymoor
             elseif (itemType == ITEMTYPE_TROPHY and specializedType == SPECIALIZED_ITEMTYPE_TROPHY_TREASURE_MAP) then
                 if (TM.TREASURE_MAPS[GetItemId(item.bagId, item.slotIndex)]) then
-                    table.insert(foundTrash.maps, {bagId = item.bagId, slotIndex = item.slotIndex})
+                    AddItemToFound(foundTrash, "maps", item.bagId, item.slotIndex)
                 end
 
             -- Paintings basegame only
             elseif (itemType == ITEMTYPE_FURNISHING) then
                 if (TM.PAINTINGS[GetItemId(item.bagId, item.slotIndex)]) then
-                    table.insert(foundTrash.paintings, {bagId = item.bagId, slotIndex = item.slotIndex})
+                    AddItemToFound(foundTrash, "paintings", item.bagId, item.slotIndex)
                 end
 
             -- Style mats non-racial
             elseif (itemType == ITEMTYPE_STYLE_MATERIAL or itemType == ITEMTYPE_RAW_MATERIAL) then
                 if (not TM.RACIAL_STYLE_MATS[GetItemId(item.bagId, item.slotIndex)]) then
-                    table.insert(foundTrash.stylemats, {bagId = item.bagId, slotIndex = item.slotIndex})
+                    AddItemToFound(foundTrash, "stylemats", item.bagId, item.slotIndex)
                 end
             end
         end
@@ -249,10 +261,6 @@ local function CollectTrash()
             table.insert(mailQueue, {trashTypes = {trashType}, recipient = options.to, items = items})
         end
     end
-
-    -- Debug
-    -- d("initial")
-    -- DumpMailQueue()
 
     -- If not sending separately, compress into same-recipient queues
     if (not TM.savedOptions.mailTypesSeparately) then
@@ -279,39 +287,34 @@ local function CollectTrash()
         end
     end
 
-    -- Debug
-    -- d("aftermerge")
-    -- DumpMailQueue()
-
     -- Filter out any mails that don't have enough items
-    local tempMailQueue = {}
-    for _, data in ipairs(mailQueue) do
-        local minThreshold = 50
-        for _, trashType in ipairs(data.trashTypes) do
-            local threshold = TM.savedOptions[trashType].threshold
-            if (threshold < minThreshold) then
-                minThreshold = threshold
+    if (not ignoreThreshold) then
+        local tempMailQueue = {}
+        for _, data in ipairs(mailQueue) do
+            local minThreshold = 50
+            for _, trashType in ipairs(data.trashTypes) do
+                local threshold = TM.savedOptions[trashType].threshold
+                if (threshold < minThreshold) then
+                    minThreshold = threshold
+                end
+            end
+            if (#data.items >= minThreshold) then
+                table.insert(tempMailQueue, data)
+                d(string.format("%d total items to send to %s", #data.items, data.recipient))
+            else
+                d(string.format("only %d items to send to %s", #data.items, data.recipient))
             end
         end
-        if (#data.items >= minThreshold) then
-            table.insert(tempMailQueue, data)
-        else
-            d(string.format("only %d items to send to %s", #data.items, data.recipient))
-        end
+        mailQueue = tempMailQueue
     end
-    mailQueue = tempMailQueue
-
-    -- Debug
-    -- d("afterfilter")
-    DumpMailQueue()
 end
 TM.CollectTrash = CollectTrash
 
 ---------------------------------------------------------------------
 -- Entry point
 ---------------------------------------------------------------------
-local function SendTrash()
-    CollectTrash()
+local function SendTrash(ignoreThreshold)
+    CollectTrash(ignoreThreshold)
     SendTrashMail()
 end
 
@@ -324,7 +327,7 @@ local function OnPlayerActivated()
 
     -- Initial check
     if (TM.savedOptions.checkOnLogin) then
-        zo_callLater(SendTrash, 5000)
+        zo_callLater(function() SendTrash(false) end, 5000)
     end
 end
 
@@ -346,4 +349,5 @@ local function OnAddOnLoaded(_, addonName)
 end
 EVENT_MANAGER:RegisterForEvent(TM.name, EVENT_ADD_ON_LOADED, OnAddOnLoaded)
 
-SLASH_COMMANDS["/sendtrash"] = SendTrash
+SLASH_COMMANDS["/sendtrash"] = function() SendTrash(false) end
+SLASH_COMMANDS["/sendalltrash"] = function() SendTrash(true) end
