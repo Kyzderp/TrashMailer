@@ -6,6 +6,7 @@ TM.version = "0.0.0"
 local defaultOptions = {
     mailTypesSeparately = false, -- If the recipient is the same. Also if not separate, then use minimum threshold
     onlySendDeconIfNotMaxed = true, -- If the current character isn't maxed for that crafting line, don't consider intricates trash
+    onlySendFullMails = false,
     checkOnLogin = true,
     blacksmithing = {
         to = "",
@@ -39,6 +40,9 @@ local defaultOptions = {
         to = "",
         threshold = 1,
     },
+    mailTitles = {
+        -- ["@Kyzeragon"] = "<<1>>",
+    },
 }
 
 local tradeskillToName = {
@@ -58,16 +62,18 @@ local nameToTitleAbbreviation = {
     paintings = "Paintings",
     stylemats = "StyleMats",
 }
+TrashMailer.nameToTitleAbbreviation = nameToTitleAbbreviation
 
 ---------------------------------------------------------------------
 -- Mail formatting
 ---------------------------------------------------------------------
-local function GetMailTitle(trashTypes)
+local function GetMailTitle(trashTypes, recipient)
     local trashNames = {}
     for _, trashType in pairs(trashTypes) do
         table.insert(trashNames, nameToTitleAbbreviation[trashType])
     end
-    return table.concat(trashNames, "/")
+    local typeNames = table.concat(trashNames, "/")
+    return zo_strformat(TM.savedOptions.mailTitles[recipient], typeNames)
 end
 
 local function GetMailBody()
@@ -145,7 +151,7 @@ local function SendTrashMail()
     EVENT_MANAGER:RegisterForEvent(TM.name .. "SendSuccess", EVENT_MAIL_SEND_SUCCESS, OnSendTrashSuccess)
     EVENT_MANAGER:RegisterForEvent(TM.name .. "SendFail", EVENT_MAIL_SEND_FAILED, OnSendTrashFailed)
 
-    SendMail(mailData.recipient, GetMailTitle(trashTypes), GetMailBody())
+    SendMail(mailData.recipient, GetMailTitle(trashTypes, mailData.recipient), GetMailBody())
 
     CloseTrashMailbox()
 end
@@ -334,6 +340,25 @@ end
 -- Pre-char load
 local function Initialize()
     TM.savedOptions = ZO_SavedVars:NewAccountWide("TrashMailerSavedVariables", 1, "Options", defaultOptions)
+
+    -- Clean up mail titles
+    local newMailTitles = {}
+    for name, title in pairs(TM.savedOptions.mailTitles) do
+        for type, _ in pairs(nameToTitleAbbreviation) do
+            if (TM.savedOptions[type].to == name) then
+                newMailTitles[name] = title
+            end
+        end
+    end
+    TM.savedOptions.mailTitles = newMailTitles
+
+    -- And also add defaults for missing recipients
+    for type, _ in pairs(nameToTitleAbbreviation) do
+        local recipient = TM.savedOptions[type].to
+        if (not TM.savedOptions.mailTitles[recipient]) then
+            TM.savedOptions.mailTitles[recipient] = "<<1>>"
+        end
+    end
 
     TM.CreateSettingsMenu()
 
