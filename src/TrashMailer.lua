@@ -1,7 +1,7 @@
 TrashMailer = TrashMailer or {}
 local TM = TrashMailer
 TM.name = "TrashMailer"
-TM.version = "0.0.0"
+TM.version = "0.0.1"
 
 local defaultOptions = {
     mailTypesSeparately = false, -- If the recipient is the same. Also if not separate, then use minimum threshold
@@ -77,7 +77,7 @@ local function GetMailTitle(trashTypes, recipient)
 end
 
 local function GetMailBody()
-    return string.format("yeet\n\nauto sent via %s v%s by Kyzeragon\nexcuse any derps while I continue testing kthxbai",
+    return string.format("auto sent via %s v%s by Kyzeragon",
         TM.name, TM.version)
 end
 
