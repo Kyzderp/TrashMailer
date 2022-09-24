@@ -1,13 +1,13 @@
 TrashMailer = TrashMailer or {}
 local TM = TrashMailer
 TM.name = "TrashMailer"
-TM.version = "0.0.1"
+TM.version = "0.0.2"
 
 local defaultOptions = {
     mailTypesSeparately = false, -- If the recipient is the same. Also if not separate, then use minimum threshold
-    onlySendDeconIfNotMaxed = true, -- If the current character isn't maxed for that crafting line, don't consider intricates trash
-    onlySendFullMails = false,
-    checkOnLogin = true,
+    onlySendDeconIfNotMaxed = true, -- If the current character isn't maxed for that crafting line, don't consider intricates trash TODO: setting
+    onlySendFullMails = false, -- TODO: setting and actually use it
+    checkOnLogin = true, -- TODO: setting
     blacksmithing = {
         to = "",
         threshold = 4,
@@ -40,6 +40,18 @@ local defaultOptions = {
         to = "",
         threshold = 1,
     },
+    midlevelmats = {
+        to = "",
+        threshold = 6,
+    },
+    furnishingmats = {
+        to = "",
+        threshold = 2,
+    },
+    traitmats = {
+        to = "",
+        threshold = 4,
+    },
     mailTitles = {
         -- ["@Kyzeragon"] = "<<1>>",
     },
@@ -61,6 +73,9 @@ local nameToTitleAbbreviation = {
     maps = "Maps",
     paintings = "Paintings",
     stylemats = "StyleMats",
+    midlevelmats = "Mats",
+    furnishingmats = "FurnMats",
+    traitmats = "TraitMats",
 }
 TrashMailer.nameToTitleAbbreviation = nameToTitleAbbreviation
 
@@ -183,16 +198,10 @@ local function CollectTrash(ignoreThreshold)
         return
     end
 
-    local foundTrash = {
-        blacksmithing = {},
-        clothing = {},
-        woodworking = {},
-        jewelrycrafting = {},
-        enchanting = {},
-        maps = {},
-        paintings = {},
-        stylemats = {},
-    }
+    local foundTrash = {}
+    for type, _ in pairs(nameToTitleAbbreviation) do
+        foundTrash[type] = {}
+    end
 
     -- Collect the trash items into types
     local bagCache = SHARED_INVENTORY:GetOrCreateBagCache(BAG_BACKPACK)
@@ -244,6 +253,21 @@ local function CollectTrash(ignoreThreshold)
                 if (not TM.RACIAL_STYLE_MATS[GetItemId(item.bagId, item.slotIndex)]) then
                     AddItemToFound(foundTrash, "stylemats", item.bagId, item.slotIndex)
                 end
+
+            -- Mid-level mats
+            elseif (TM.MID_LEVEL_MATS[GetItemId(item.bagId, item.slotIndex)]) then
+                AddItemToFound(foundTrash, "midlevelmats", item.bagId, item.slotIndex)
+
+            -- Furnishing mats
+            elseif (itemType == ITEMTYPE_FURNISHING_MATERIAL) then
+                AddItemToFound(foundTrash, "furnishingmats", item.bagId, item.slotIndex)
+
+            -- Trait mats
+            elseif (itemType == ITEMTYPE_WEAPON_TRAIT
+                or itemType == ITEMTYPE_ARMOR_TRAIT
+                or itemType == ITEMTYPE_JEWELRY_TRAIT
+                or itemType == ITEMTYPE_JEWELRY_RAW_TRAIT) then
+                AddItemToFound(foundTrash, "traitmats", item.bagId, item.slotIndex)
             end
         end
     end

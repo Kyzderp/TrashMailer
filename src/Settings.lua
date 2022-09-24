@@ -197,6 +197,42 @@ function TM.CreateSettingsMenu()
                     isMultiline = false,
                     isExtraWide = false,
                 },
+                {
+                    type = "editbox",
+                    name = "Mid-level materials",
+                    width = "full",
+                    tooltip = "The @name or character name to send mid-level materials to. These are materials like Void Cloth, Mahogany, etc. any of the 4 gear crafting types that are NOT either level 1 or CP 160. This is mainly intended to aid in non-ESO+ inventory management, keeping the low and high level materials for daily writs",
+                    getFunc = function() return TM.savedOptions.midlevelmats.to end,
+                    setFunc = function(name)
+                        UpdateRecipient("midlevelmats", name)
+                    end,
+                    isMultiline = false,
+                    isExtraWide = false,
+                },
+                {
+                    type = "editbox",
+                    name = "Furnishing materials",
+                    width = "full",
+                    tooltip = "The @name or character name to send furnishing materials to. This includes Heartwood, Mundane Runes, etc. but ALSO Dwarven Construct Repair Parts!",
+                    getFunc = function() return TM.savedOptions.furnishingmats.to end,
+                    setFunc = function(name)
+                        UpdateRecipient("furnishingmats", name)
+                    end,
+                    isMultiline = false,
+                    isExtraWide = false,
+                },
+                {
+                    type = "editbox",
+                    name = "Trait materials",
+                    width = "full",
+                    tooltip = "The @name or character name to send trait materials to. This includes armor, weapon, and jewelry trait materials, but ALSO Nirncrux!",
+                    getFunc = function() return TM.savedOptions.traitmats.to end,
+                    setFunc = function(name)
+                        UpdateRecipient("traitmats", name)
+                    end,
+                    isMultiline = false,
+                    isExtraWide = false,
+                },
             },
         },
         -- TODO: add TEST button

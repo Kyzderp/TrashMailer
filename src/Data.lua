@@ -226,3 +226,103 @@ TM.RACIAL_STYLE_MATS = {
     [33253] = true, -- Obsidian
     [33258] = true, -- Starmetal
 }
+
+TM.MID_LEVEL_MATS = {
+-- Blacksmithing:
+    -- [808] = true, -- Iron Ore
+    -- [5413] = true, -- Iron Ingot
+    [5820] = true, -- High Iron Ore
+    [4487] = true, -- Steel Ingot
+    [23103] = true, -- Orichalcum Ore
+    [23107] = true, -- Orichalcum Ingot
+    [23104] = true, -- Dwarven Ore
+    [6000] = true, -- Dwarven Ingot
+    [23105] = true, -- Ebony Ore
+    [6001] = true, -- Ebony Ingot
+    [4482] = true, -- Calcinium Ore
+    [46127] = true, -- Calcinium Ingot
+    [23133] = true, -- Galatite Ore
+    [46128] = true, -- Galatite Ingot
+    [23134] = true, -- Quicksilver Ore
+    [46129] = true, -- Quicksilver Ingot
+    [23135] = true, -- Voidstone Ore
+    [46130] = true, -- Voidstone Ingot
+    -- [71198] = true, -- Rubedite Ore
+    -- [64489] = true, -- Rubedite Ingot
+
+    -- Clothing:
+    -- [812] = true, -- Raw Jute
+    -- [793] = true, -- Rawhide Scraps
+    -- [811] = true, -- Jute
+    -- [794] = true, -- Rawhide
+    [4464] = true, -- Raw Flax
+    [4448] = true, -- Hide Scraps
+    [4463] = true, -- Flax
+    [4447] = true, -- Hide
+    [23129] = true, -- Raw Cotton
+    [23095] = true, -- Leather Scraps
+    [23125] = true, -- Cotton
+    [23099] = true, -- Leather
+    [23130] = true, -- Raw Spidersilk
+    [6020] = true, -- Thick Leather Scraps
+    [23126] = true, -- Spidersilk
+    [23100] = true, -- Thick Leather
+    [23131] = true, -- Raw Ebonthread
+    [23097] = true, -- Fell Hide Scraps
+    [23127] = true, -- Ebonthread
+    [23101] = true, -- Fell Hide
+    [33217] = true, -- Raw Kreshweed
+    [23142] = true, -- Topgrain Hide Scraps
+    [46131] = true, -- Kresh Fiber
+    [46135] = true, -- Topgrain Hide
+    [33218] = true, -- Raw Ironweed
+    [23143] = true, -- Iron Hide Scraps
+    [46132] = true, -- Ironthread
+    [46136] = true, -- Iron Hide
+    [33219] = true, -- Raw Silverweed
+    [800] = true, -- Superb Hide Scraps
+    [46133] = true, -- Silverweave
+    [46137] = true, -- Superb Hide
+    [33220] = true, -- Raw Void Bloom
+    [4478] = true, -- Shadowhide Scraps
+    [46134] = true, -- Void Cloth
+    [46138] = true, -- Shadowhide
+    -- [71200] = true, -- Raw Ancestor Silk
+    -- [71239] = true, -- Rubedo Hide Scraps
+    -- [64504] = true, -- Ancestor Silk
+    -- [64506] = true, -- Rubedo Leather
+
+    -- Woodworking:
+    -- [802] = true, -- Rough Maple
+    -- [803] = true, -- Sanded Maple
+    [521] = true, -- Rough Oak
+    [533] = true, -- Sanded Oak
+    [23117] = true, -- Rough Beech
+    [23121] = true, -- Sanded Beech
+    [23118] = true, -- Rough Hickory
+    [23122] = true, -- Sanded Hickory
+    [23119] = true, -- Rough Yew
+    [23123] = true, -- Sanded Yew
+    [818] = true, -- Rough Birch
+    [46139] = true, -- Sanded Birch
+    [4439] = true, -- Rough Ash
+    [46140] = true, -- Sanded Ash
+    [23137] = true, -- Rough Mahogany
+    [46141] = true, -- Sanded Mahogany
+    [23138] = true, -- Rough Nightwood
+    [46142] = true, -- Sanded Nightwood
+    -- [71199] = true, -- Rough Ruby Ash
+    -- [64502] = true, -- Sanded Ruby Ash
+
+    -- Jewelry Crafting:
+    -- [135137] = true, -- Pewter Dust
+    -- [135138] = true, -- Pewter Ounce
+    [135139] = true, -- Copper Dust
+    [135140] = true, -- Copper Ounce
+    [135141] = true, -- Silver Dust
+    [135142] = true, -- Silver Ounce
+    [135143] = true, -- Electrum Dust
+    [135144] = true, -- Electrum Ounce
+    -- [135145] = true, -- Platinum Dust
+    -- [135146] = true, -- Platinum Ounce
+}
