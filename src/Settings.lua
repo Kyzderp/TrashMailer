@@ -179,6 +179,18 @@ function TM.CreateSettingsMenu()
                     isMultiline = false,
                     isExtraWide = false,
                 },
+                {
+                    type = "editbox",
+                    name = "Recipes",
+                    width = "full",
+                    tooltip = "The @name or character name to send recipes to. These include provisioning recipes and furnishing plans",
+                    getFunc = function() return TM.savedOptions.recipes.to end,
+                    setFunc = function(name)
+                        UpdateRecipient("recipes", name)
+                    end,
+                    isMultiline = false,
+                    isExtraWide = false,
+                },
             },
         },
         {
@@ -229,6 +241,42 @@ function TM.CreateSettingsMenu()
                     getFunc = function() return TM.savedOptions.traitmats.to end,
                     setFunc = function(name)
                         UpdateRecipient("traitmats", name)
+                    end,
+                    isMultiline = false,
+                    isExtraWide = false,
+                },
+                {
+                    type = "editbox",
+                    name = "Provisioning materials",
+                    width = "full",
+                    tooltip = "The @name or character name to send provisioning materials to. This includes food and drink ingredients, but ALSO Perfect Roe and Aetherial Dust!",
+                    getFunc = function() return TM.savedOptions.provisioningmats.to end,
+                    setFunc = function(name)
+                        UpdateRecipient("provisioningmats", name)
+                    end,
+                    isMultiline = false,
+                    isExtraWide = false,
+                },
+                {
+                    type = "editbox",
+                    name = "Alchemy materials",
+                    width = "full",
+                    tooltip = "The @name or character name to send alchemy materials to. This includes potion and poison ingredients, and ALSO Dragon Rheum!",
+                    getFunc = function() return TM.savedOptions.alchemymats.to end,
+                    setFunc = function(name)
+                        UpdateRecipient("alchemymats", name)
+                    end,
+                    isMultiline = false,
+                    isExtraWide = false,
+                },
+                {
+                    type = "editbox",
+                    name = "Enchanting materials",
+                    width = "full",
+                    tooltip = "The @name or character name to send enchanting materials to. This includes Aspect, Essence, and Potency runestones",
+                    getFunc = function() return TM.savedOptions.enchantingmats.to end,
+                    setFunc = function(name)
+                        UpdateRecipient("enchantingmats", name)
                     end,
                     isMultiline = false,
                     isExtraWide = false,

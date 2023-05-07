@@ -1,7 +1,7 @@
 TrashMailer = TrashMailer or {}
 local TM = TrashMailer
 TM.name = "TrashMailer"
-TM.version = "0.0.2"
+TM.version = "0.0.3"
 
 local defaultOptions = {
     mailTypesSeparately = false, -- If the recipient is the same. Also if not separate, then use minimum threshold
@@ -36,6 +36,10 @@ local defaultOptions = {
         to = "",
         threshold = 1,
     },
+    recipes = {
+        to = "",
+        threshold = 4,
+    },
     stylemats = {
         to = "",
         threshold = 1,
@@ -49,6 +53,18 @@ local defaultOptions = {
         threshold = 2,
     },
     traitmats = {
+        to = "",
+        threshold = 4,
+    },
+    provisioningmats = {
+        to = "",
+        threshold = 4,
+    },
+    alchemymats = {
+        to = "",
+        threshold = 4,
+    },
+    enchantingmats = {
         to = "",
         threshold = 4,
     },
@@ -72,10 +88,14 @@ local nameToTitleAbbreviation = {
     enchanting = "Glyphs",
     maps = "Maps",
     paintings = "Paintings",
+    recipes = "Recipes",
     stylemats = "StyleMats",
     midlevelmats = "Mats",
     furnishingmats = "FurnMats",
     traitmats = "TraitMats",
+    provisioningmats = "ProvMats",
+    alchemymats = "AlchMats",
+    enchantingmats = "EnchMats",
 }
 TrashMailer.nameToTitleAbbreviation = nameToTitleAbbreviation
 
@@ -248,6 +268,10 @@ local function CollectTrash(ignoreThreshold)
                     AddItemToFound(foundTrash, "paintings", item.bagId, item.slotIndex)
                 end
 
+            -- ALL recipes
+            elseif (itemType == ITEMTYPE_RECIPE) then
+                AddItemToFound(foundTrash, "recipes", item.bagId, item.slotIndex)
+
             -- Style mats non-racial
             elseif (itemType == ITEMTYPE_STYLE_MATERIAL or itemType == ITEMTYPE_RAW_MATERIAL) then
                 if (not TM.RACIAL_STYLE_MATS[GetItemId(item.bagId, item.slotIndex)]) then
@@ -268,6 +292,20 @@ local function CollectTrash(ignoreThreshold)
                 or itemType == ITEMTYPE_JEWELRY_TRAIT
                 or itemType == ITEMTYPE_JEWELRY_RAW_TRAIT) then
                 AddItemToFound(foundTrash, "traitmats", item.bagId, item.slotIndex)
+
+            -- Provisioning mats
+            elseif (itemType == ITEMTYPE_INGREDIENT) then
+                AddItemToFound(foundTrash, "provisioningmats", item.bagId, item.slotIndex)
+
+            -- Alchemy mats
+            elseif (itemType == ITEMTYPE_POISON_BASE or itemType == ITEMTYPE_POTION_BASE or itemType == ITEMTYPE_ADDITIVE or itemType == ITEMTYPE_REAGENT) then
+                AddItemToFound(foundTrash, "alchemymats", item.bagId, item.slotIndex)
+
+            -- Enchanting mats
+            elseif (itemType == ITEMTYPE_ENCHANTING_RUNE_ASPECT
+                or itemType == ITEMTYPE_ENCHANTING_RUNE_ESSENCE
+                or itemType == ITEMTYPE_ENCHANTING_RUNE_POTENCY) then
+                AddItemToFound(foundTrash, "enchantingmats", item.bagId, item.slotIndex)
             end
         end
     end
