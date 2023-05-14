@@ -198,6 +198,39 @@ function TM.CreateSettingsMenu()
             name = "Crafting Materials",
             controls = {
                 {
+                    type = "description",
+                    text = "Sending all crafting materials is intended to help those without ESO+ manage their inventory more easily. Anything that fits under the crafting item filter would be sent to the specified name, ignoring the other categories below. The other categories together do not currently encompass every crafting item.",
+                    width = "full",
+                },
+                {
+                    type = "checkbox",
+                    name = "Send ALL crafting materials",
+                    tooltip = "Use the ALL crafting materials mode, instead of specific categories",
+                    default = false,
+                    getFunc = function() return TM.savedOptions.sendAllCraftingMats end,
+                    setFunc = function(value)
+                        TM.savedOptions.sendAllCraftingMats = value
+                    end,
+                    width = "full",
+                },
+                {
+                    type = "editbox",
+                    name = "ALL crafting materials",
+                    width = "full",
+                    tooltip = "The @name or character name to send ALL crafting materials to. This means anything that fits in the crafting bag!",
+                    getFunc = function() return TM.savedOptions.allcraftingmats.to end,
+                    setFunc = function(name)
+                        UpdateRecipient("allcraftingmats", name)
+                    end,
+                    isMultiline = false,
+                    isExtraWide = false,
+                    disabled = function() return not TM.savedOptions.sendAllCraftingMats end,
+                },
+                {
+                    type = "divider",
+                    width = "full",
+                },
+                {
                     type = "editbox",
                     name = "Non-racial style materials",
                     width = "full",
@@ -208,6 +241,7 @@ function TM.CreateSettingsMenu()
                     end,
                     isMultiline = false,
                     isExtraWide = false,
+                    disabled = function() return TM.savedOptions.sendAllCraftingMats end,
                 },
                 {
                     type = "editbox",
@@ -220,6 +254,7 @@ function TM.CreateSettingsMenu()
                     end,
                     isMultiline = false,
                     isExtraWide = false,
+                    disabled = function() return TM.savedOptions.sendAllCraftingMats end,
                 },
                 {
                     type = "editbox",
@@ -232,6 +267,7 @@ function TM.CreateSettingsMenu()
                     end,
                     isMultiline = false,
                     isExtraWide = false,
+                    disabled = function() return TM.savedOptions.sendAllCraftingMats end,
                 },
                 {
                     type = "editbox",
@@ -244,6 +280,7 @@ function TM.CreateSettingsMenu()
                     end,
                     isMultiline = false,
                     isExtraWide = false,
+                    disabled = function() return TM.savedOptions.sendAllCraftingMats end,
                 },
                 {
                     type = "editbox",
@@ -256,6 +293,7 @@ function TM.CreateSettingsMenu()
                     end,
                     isMultiline = false,
                     isExtraWide = false,
+                    disabled = function() return TM.savedOptions.sendAllCraftingMats end,
                 },
                 {
                     type = "editbox",
@@ -268,6 +306,7 @@ function TM.CreateSettingsMenu()
                     end,
                     isMultiline = false,
                     isExtraWide = false,
+                    disabled = function() return TM.savedOptions.sendAllCraftingMats end,
                 },
                 {
                     type = "editbox",
@@ -280,6 +319,7 @@ function TM.CreateSettingsMenu()
                     end,
                     isMultiline = false,
                     isExtraWide = false,
+                    disabled = function() return TM.savedOptions.sendAllCraftingMats end,
                 },
             },
         },

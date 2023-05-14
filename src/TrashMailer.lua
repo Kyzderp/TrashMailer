@@ -1,13 +1,20 @@
 TrashMailer = TrashMailer or {}
 local TM = TrashMailer
 TM.name = "TrashMailer"
-TM.version = "0.0.3"
+TM.version = "0.1.0"
 
 local defaultOptions = {
     mailTypesSeparately = false, -- If the recipient is the same. Also if not separate, then use minimum threshold
     onlySendDeconIfNotMaxed = true, -- If the current character isn't maxed for that crafting line, don't consider intricates trash TODO: setting
     onlySendFullMails = false, -- TODO: setting and actually use it
     checkOnLogin = true, -- TODO: setting
+
+    sendAllCraftingMats = false, -- Instead of individual types of mats, send ALL of the things that would fit in craft bag
+    allcraftingmats = {
+        to = "",
+        threshold = 4,
+    },
+
     blacksmithing = {
         to = "",
         threshold = 4,
@@ -96,6 +103,7 @@ local nameToTitleAbbreviation = {
     provisioningmats = "ProvMats",
     alchemymats = "AlchMats",
     enchantingmats = "EnchMats",
+    allcraftingmats = "CraftBagStuff",
 }
 TrashMailer.nameToTitleAbbreviation = nameToTitleAbbreviation
 
@@ -230,8 +238,13 @@ local function CollectTrash(ignoreThreshold)
             local itemLink = GetItemLink(item.bagId, item.slotIndex, LINK_STYLE_BRACKETS)
             local itemType, specializedType = GetItemLinkItemType(itemLink)
 
+            -- ALL crafting mats
+            local mainFilter, secondaryFilter = GetItemFilterTypeInfo(item.bagId, item.slotIndex)
+            if (TM.savedOptions.sendAllCraftingMats and mainFilter == ITEMFILTERTYPE_CRAFTING or secondaryFilter == ITEMFILTERTYPE_CRAFTING) then
+                AddItemToFound(foundTrash, "allcraftingmats", item.bagId, item.slotIndex)
+
             -- Intricates
-            if (GetItemTraitInformationFromItemLink(itemLink) == ITEM_TRAIT_INFORMATION_INTRICATE) then
+            elseif (GetItemTraitInformationFromItemLink(itemLink) == ITEM_TRAIT_INFORMATION_INTRICATE) then
                 local tradeskillType = GetItemLinkCraftingSkillType(itemLink)
                 if (TM.savedOptions.onlySendDeconIfNotMaxed) then
                     local skillType, skillId = GetCraftingSkillLineIndices(tradeskillType)
