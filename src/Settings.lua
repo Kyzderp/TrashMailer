@@ -55,6 +55,11 @@ function TM.CreateSettingsMenu()
             width = "full",
         },
         {
+            type = "description",
+            text = "Mail-sending will automatically trigger upon log in, or if you use |c99FF99/sendtrash|r. To send all trash regardless of minimum number of attachment thresholds, |c99FF99/sendalltrash|r. To delete empty TrashMailer mails, |c99FF99/cleantrashmails|r",
+            width = "full",
+        },
+        {
             type = "checkbox",
             name = "Combine same recipient",
             tooltip = "If the recipient is the same for multiple trash types, combine them into the same mails instead of sending separate mails",
@@ -62,6 +67,18 @@ function TM.CreateSettingsMenu()
             getFunc = function() return not TM.savedOptions.mailTypesSeparately end,
             setFunc = function(value)
                 TM.savedOptions.mailTypesSeparately = not value
+            end,
+            width = "full",
+        },
+        {
+            type = "checkbox",
+            name = "Auto delete after Take All",
+            tooltip = "After you use Take All (Player), try to automatically delete any empty TrashMailer mails. You can also trigger this with the command |c99FF99/cleantrashmails|r",
+            default = false,
+            getFunc = function() return TM.savedOptions.autoDelete end,
+            setFunc = function(value)
+                TM.savedOptions.autoDelete = value
+                TM.InitializeReceivedMailHandler()
             end,
             width = "full",
         },

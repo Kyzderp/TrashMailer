@@ -8,6 +8,7 @@ local defaultOptions = {
     onlySendDeconIfNotMaxed = true, -- If the current character isn't maxed for that crafting line, don't consider intricates trash TODO: setting
     onlySendFullMails = false, -- TODO: setting and actually use it
     checkOnLogin = true, -- TODO: setting
+    autoDelete = false,
 
     sendAllCraftingMats = false, -- Instead of individual types of mats, send ALL of the things that would fit in craft bag
     allcraftingmats = {
@@ -436,6 +437,7 @@ local function Initialize()
     end
 
     TM.CreateSettingsMenu()
+    TM.InitializeReceivedMailHandler()
 
     EVENT_MANAGER:RegisterForEvent(TM.name .. "PlayerActivated", EVENT_PLAYER_ACTIVATED, OnPlayerActivated)
 end
@@ -451,3 +453,4 @@ EVENT_MANAGER:RegisterForEvent(TM.name, EVENT_ADD_ON_LOADED, OnAddOnLoaded)
 
 SLASH_COMMANDS["/sendtrash"] = function() SendTrash(false) end
 SLASH_COMMANDS["/sendalltrash"] = function() SendTrash(true) end
+SLASH_COMMANDS["/cleantrashmails"] = function() TM.DeleteTrashMails() end

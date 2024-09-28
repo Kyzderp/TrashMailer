@@ -10,4 +10,5 @@
 src/TrashMailer.lua
 src/Data.lua
 src/Settings.lua
+src/ReceivedMailHandler.lua
 
