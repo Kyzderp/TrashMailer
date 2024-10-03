@@ -40,10 +40,13 @@ local function OnMailReadable(_, mailId)
 
     local _, _, subject = GetMailItemInfo(mailId)
     local body = ReadMail(mailId)
-    if (StartsWith(body, "auto sent via " .. TM.name)) then
+    local deleted = false
+    if (StartsWith(body, "auto sent via " .. TM.name)
+        or (body == "" and subject == "")) then
         if (GetMailAttachmentInfo(mailId) == 0) then
             d("Deleting " .. subject)
             DeleteMail(mailId)
+            deleted = true
         else
             d(subject .. " still has items")
         end
@@ -56,7 +59,13 @@ local function OnMailReadable(_, mailId)
         d("Finished scanning mails")
         return
     end
-    zo_callLater(function() TM.TryDeleteMail(next) end, 500)
+
+    -- It should be fine to go fast when not deleting? IDK
+    if (deleted) then
+        zo_callLater(function() TM.TryDeleteMail(next) end, 200)
+    else
+        TM.TryDeleteMail(next)
+    end
 end
 
 -- Request reading the mail, then listen for the mail readable event

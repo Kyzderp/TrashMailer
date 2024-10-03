@@ -73,7 +73,7 @@ function TM.CreateSettingsMenu()
         {
             type = "checkbox",
             name = "Auto delete after Take All",
-            tooltip = "After you use Take All (Player), try to automatically delete any empty TrashMailer mails. You can also trigger this with the command |c99FF99/cleantrashmails|r",
+            tooltip = "After you use Take All (Player), try to automatically delete any empty TrashMailer mails and any completely empty mails (no subject, body, or attachments). You can also trigger this with the command |c99FF99/cleantrashmails|r",
             default = false,
             getFunc = function() return TM.savedOptions.autoDelete end,
             setFunc = function(value)
