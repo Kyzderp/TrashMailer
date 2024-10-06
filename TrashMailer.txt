@@ -1,8 +1,8 @@
 ## Title: TrashMailer
 ## Author: Kyzeragon
 ## Description: One Bosmer's trash is another Altmer's treasure
-## Version: 0.1.0
-## APIVersion: 101037
+## Version: 0.2.0
+## APIVersion: 101043
 ## DependsOn: LibAddonMenu-2.0>=31
 
 ## SavedVariables: TrashMailerSavedVariables

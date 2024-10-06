@@ -1,7 +1,7 @@
 TrashMailer = TrashMailer or {}
 local TM = TrashMailer
 TM.name = "TrashMailer"
-TM.version = "0.1.0"
+TM.version = "0.2.0"
 
 local defaultOptions = {
     mailTypesSeparately = false, -- If the recipient is the same. Also if not separate, then use minimum threshold
