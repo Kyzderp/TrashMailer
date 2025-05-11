@@ -258,8 +258,8 @@ local function CollectTrash(ignoreThreshold)
                 end
 
             -- Not crafted glyphs
-            elseif (not IsItemLinkCrafted(itemLink)
-                and (itemType == ITEMTYPE_GLYPH_ARMOR or itemType == ITEMTYPE_GLYPH_JEWELRY or itemType == ITEMTYPE_GLYPH_WEAPON)) then
+            elseif (not IsItemLinkCrafted(itemLink) and (itemType == ITEMTYPE_GLYPH_ARMOR or itemType == ITEMTYPE_GLYPH_JEWELRY or itemType == ITEMTYPE_GLYPH_WEAPON)) then
+            -- elseif ((itemType == ITEMTYPE_GLYPH_ARMOR or itemType == ITEMTYPE_GLYPH_JEWELRY or itemType == ITEMTYPE_GLYPH_WEAPON)) then
                 if (TM.savedOptions.onlySendDeconIfNotMaxed) then
                     local skillType, skillId = GetCraftingSkillLineIndices(CRAFTING_TYPE_ENCHANTING)
                     local _, level = GetSkillLineInfo(skillType, skillId)
